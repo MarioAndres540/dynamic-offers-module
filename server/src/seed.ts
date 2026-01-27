@@ -8,23 +8,39 @@ dotenv.config();
 const products = [
     {
         name: 'Laptop Dell Inspiron 15',
-        basePrice: 749.99,
-        image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&q=80'
+        basePrice: 899.99,
+        image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&q=80',
+        category: 'Computadoras'
     },
     {
         name: 'Monitor LG 27" 4K',
-        basePrice: 399.99,
-        image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80'
+        basePrice: 449.99,
+        image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',
+        category: 'Monitores'
     },
     {
         name: 'Tablet iPad Air',
         basePrice: 599.99,
-        image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80'
+        image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80',
+        category: 'Tablets'
     },
     {
-        name: 'Auriculares Sony WH-1000XM5',
-        basePrice: 349.99,
-        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'
+        name: 'Mouse Logitech MX Master 3',
+        basePrice: 99.99,
+        image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80',
+        category: 'Accesorios'
+    },
+    {
+        name: 'Teclado Mecánico Corsair K70',
+        basePrice: 159.99,
+        image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=400&q=80',
+        category: 'Accesorios'
+    },
+    {
+        name: 'Webcam Logitech C920',
+        basePrice: 79.99,
+        image: 'https://images.unsplash.com/photo-1612444315754-ef850bad2210?w=400&q=80',
+        category: 'Accesorios'
     }
 ];
 

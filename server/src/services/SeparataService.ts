@@ -28,6 +28,27 @@ export class SeparataService {
         return await Separata.find().populate('products');
     }
 
+    async updateSeparata(id: string, data: Partial<ISeparata>): Promise<ISeparata | null> {
+        const { products, startTime, endTime } = data;
+
+        if (products && products.length > 0 && startTime && endTime) {
+            // Validate overlapping (excluding current one)
+            const overlap = await Separata.findOne({
+                _id: { $ne: id },
+                products: { $in: products },
+                $or: [
+                    { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
+                ]
+            });
+
+            if (overlap) {
+                throw new Error(`Overlap detected with existing Separata: ${overlap.name}`);
+            }
+        }
+
+        return await Separata.findByIdAndUpdate(id, data, { new: true });
+    }
+
     // Method to check overlap for a new potential range (useful for UI validation before submit if needed)
     async checkOverlap(productIds: string[], start: Date, end: Date): Promise<boolean> {
         const overlap = await Separata.findOne({

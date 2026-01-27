@@ -21,6 +21,16 @@ export class SeparataController {
         }
     }
 
+    async update(req: Request, res: Response) {
+        try {
+            const separata = await separataService.updateSeparata(req.params.id, req.body);
+            if (!separata) return res.status(404).json({ message: 'Separata not found' });
+            res.json(separata);
+        } catch (error: any) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async getProducts(req: Request, res: Response) {
         try {
             const products = await Product.find();

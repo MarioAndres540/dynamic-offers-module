@@ -7,5 +7,6 @@ const api = axios.create({
 export const getSeparatas = () => api.get('/separatas');
 export const getProducts = () => api.get('/products');
 export const createSeparata = (data: any) => api.post('/separatas', data);
+export const updateSeparata = (id: string, data: any) => api.put(`/separatas/${id}`, data);
 
 export default api;

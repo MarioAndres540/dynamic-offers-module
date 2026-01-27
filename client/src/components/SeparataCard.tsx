@@ -23,9 +23,11 @@ interface Separata {
 
 interface SeparataCardProps {
     separata: Separata;
+    onViewDetail: (separata: Separata) => void;
+    onEdit: () => void;
 }
 
-const SeparataCard: React.FC<SeparataCardProps> = ({ separata }) => {
+const SeparataCard: React.FC<SeparataCardProps> = ({ separata, onViewDetail, onEdit }) => {
     const now = new Date();
     const start = new Date(separata.startTime);
     const end = new Date(separata.endTime);
@@ -85,11 +87,17 @@ const SeparataCard: React.FC<SeparataCardProps> = ({ separata }) => {
             </div>
 
             <div className="bg-gray-50 px-6 py-4 flex gap-4 border-t border-gray-100">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-white transition-colors">
+                <button
+                    onClick={() => onViewDetail(separata)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-white transition-colors"
+                >
                     <Eye className="w-4 h-4" />
                     Ver Detalle
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
+                <button
+                    onClick={onEdit}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all"
+                >
                     <Edit className="w-4 h-4" />
                     Editar
                 </button>
