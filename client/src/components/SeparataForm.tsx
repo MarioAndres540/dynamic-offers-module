@@ -35,7 +35,13 @@ const SeparataForm: React.FC<SeparataFormProps> = ({ initialData, onBack, onSucc
     const [endDate, setEndDate] = useState(formatDate(initialData?.endTime));
     const [endTime, setEndTime] = useState(formatTime(initialData?.endTime) || '23:59');
 
-    const [selectedProducts, setSelectedProducts] = useState<any[]>(initialData?.products || []);
+    const [selectedProducts, setSelectedProducts] = useState<any[]>(
+        initialData?.items?.map((item: any) => ({
+            ...item.product,
+            promoType: item.promotionType,
+            promoValue: item.promotionValue
+        })) || []
+    );
 
     // Product Selector State
     const [tempProduct, setTempProduct] = useState('');
@@ -95,9 +101,11 @@ const SeparataForm: React.FC<SeparataFormProps> = ({ initialData, onBack, onSucc
                 description,
                 startTime: start.toISOString(),
                 endTime: end.toISOString(),
-                products: selectedProducts.map(p => p._id),
-                promotionType: selectedProducts[0]?.promoType || initialData?.promotionType || 'percentage',
-                promotionValue: selectedProducts[0]?.promoValue || initialData?.promotionValue || 10
+                items: selectedProducts.map(p => ({
+                    product: p._id,
+                    promotionType: p.promoType,
+                    promotionValue: p.promoValue
+                }))
             };
 
             console.log('Sending payload:', JSON.stringify(payload, null, 2));

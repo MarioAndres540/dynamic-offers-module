@@ -68,20 +68,22 @@ const seedDB = async () => {
             {
                 name: 'Black Friday 2026',
                 description: 'Descuentos especiales para Black Friday',
-                products: [createdProducts[0]._id, createdProducts[1]._id, createdProducts[2]._id],
+                items: [
+                    { product: createdProducts[0]._id, promotionType: 'percentage', promotionValue: 15 },
+                    { product: createdProducts[1]._id, promotionType: 'percentage', promotionValue: 20 },
+                    { product: createdProducts[2]._id, promotionType: 'fixed', promotionValue: 100 }
+                ],
                 startTime: now,
-                endTime: future,
-                promotionType: 'percentage',
-                promotionValue: 15
+                endTime: future
             },
             {
                 name: 'Ofertas de Verano',
                 description: 'Promociones exclusivas de temporada',
-                products: [createdProducts[3]._id],
+                items: [
+                    { product: createdProducts[3]._id, promotionType: 'fixed', promotionValue: 50 }
+                ],
                 startTime: past,
-                endTime: pastEnd,
-                promotionType: 'fixed',
-                promotionValue: 50
+                endTime: pastEnd
             }
         ]);
 

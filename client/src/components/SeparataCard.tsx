@@ -10,15 +10,19 @@ interface Product {
     image?: string;
 }
 
+interface SeparataItem {
+    product: Product;
+    promotionType: 'fixed' | 'percentage';
+    promotionValue: number;
+}
+
 interface Separata {
     _id: string;
     name: string;
     description?: string;
     startTime: string;
     endTime: string;
-    products: Product[];
-    promotionType: 'fixed' | 'percentage';
-    promotionValue: number;
+    items: SeparataItem[];
 }
 
 interface SeparataCardProps {
@@ -65,24 +69,31 @@ const SeparataCard: React.FC<SeparataCardProps> = ({ separata, onViewDetail, onE
                     </div>
                     <div className="flex items-center gap-2">
                         <Package className="w-4 h-4 text-gray-400" />
-                        <span>{separata.products.length} producto(s)</span>
+                        <span>{separata.items?.length || 0} producto(s)</span>
                     </div>
                 </div>
 
                 <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-                    {separata.products.map((product) => (
-                        <div key={product._id} className="min-w-[120px] flex flex-col gap-1">
-                            <div className="h-24 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 overflow-hidden">
-                                {product.image ? (
-                                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <Package className="w-8 h-8 text-gray-300" />
-                                )}
+                    {separata.items?.map((item) => {
+                        const product = item.product;
+                        const promoPrice = item.promotionType === 'percentage'
+                            ? product.basePrice * (1 - item.promotionValue / 100)
+                            : Math.max(0, product.basePrice - item.promotionValue);
+                        return (
+                            <div key={item.product._id} className="min-w-[120px] flex flex-col gap-1">
+                                <div className="h-24 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 overflow-hidden">
+                                    {product.image ? (
+                                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <Package className="w-8 h-8 text-gray-300" />
+                                    )}
+                                </div>
+                                <p className="text-xs font-medium text-gray-800 truncate" title={product.name}>{product.name}</p>
+                                <p className="text-xs font-bold text-green-600">${promoPrice.toFixed(2)}</p>
+                                <p className="text-[10px] text-gray-400 line-through">${product.basePrice.toFixed(2)}</p>
                             </div>
-                            <p className="text-xs font-medium text-gray-800 truncate" title={product.name}>{product.name}</p>
-                            <p className="text-xs font-bold text-green-600">${product.basePrice.toFixed(2)}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
 

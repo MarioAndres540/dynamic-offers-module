@@ -11,15 +11,19 @@ interface Product {
     category?: string;
 }
 
+interface SeparataItem {
+    product: Product;
+    promotionType: 'fixed' | 'percentage';
+    promotionValue: number;
+}
+
 interface Separata {
     _id: string;
     name: string;
     description?: string;
     startTime: string;
     endTime: string;
-    products: Product[];
-    promotionType: 'fixed' | 'percentage';
-    promotionValue: number;
+    items: SeparataItem[];
     createdAt?: string;
     updatedAt?: string;
 }
@@ -46,25 +50,24 @@ const SeparataDetail: React.FC<SeparataDetailProps> = ({ separata, onBack, onEdi
     };
 
     // Financial Calculations
-    const regularTotal = separata.products.reduce((acc, p) => acc + p.basePrice, 0);
-
-    const calculatePromoPrice = (base: number) => {
-        if (separata.promotionType === 'percentage') {
-            return base * (1 - separata.promotionValue / 100);
+    const calculatePromoPrice = (item: SeparataItem) => {
+        if (item.promotionType === 'percentage') {
+            return item.product.basePrice * (1 - item.promotionValue / 100);
         }
-        return Math.max(0, base - separata.promotionValue);
+        return Math.max(0, item.product.basePrice - item.promotionValue);
     };
 
-    const promoTotal = separata.products.reduce((acc, p) => acc + calculatePromoPrice(p.basePrice), 0);
+    const regularTotal = separata.items?.reduce((acc, item) => acc + item.product.basePrice, 0) || 0;
+    const promoTotal = separata.items?.reduce((acc, item) => acc + calculatePromoPrice(item), 0) || 0;
     const totalSavings = regularTotal - promoTotal;
-    const avgDiscount = (totalSavings / regularTotal) * 100;
+    const avgDiscount = regularTotal > 0 ? (totalSavings / regularTotal) * 100 : 0;
 
     // Categories Calculation
-    const categories = separata.products.reduce((acc: any, p) => {
-        const cat = p.category || 'Otros';
+    const categories = separata.items?.reduce((acc: any, item) => {
+        const cat = item.product.category || 'Otros';
         acc[cat] = (acc[cat] || 0) + 1;
         return acc;
-    }, {});
+    }, {}) || {};
 
     return (
         <div className="max-w-7xl mx-auto py-8 px-4">
@@ -134,8 +137,9 @@ const SeparataDetail: React.FC<SeparataDetailProps> = ({ separata, onBack, onEdi
                             <h2 className="text-lg font-bold text-gray-800">Productos en Promoción</h2>
                         </div>
                         <div className="divide-y divide-gray-100">
-                            {separata.products.map((product) => {
-                                const promoPrice = calculatePromoPrice(product.basePrice);
+                            {separata.items?.map((item) => {
+                                const product = item.product;
+                                const promoPrice = calculatePromoPrice(item);
                                 const savings = product.basePrice - promoPrice;
                                 return (
                                     <div key={product._id} className="p-6 flex flex-col md:flex-row items-center gap-6">
@@ -154,10 +158,10 @@ const SeparataDetail: React.FC<SeparataDetailProps> = ({ separata, onBack, onEdi
                                             <div className="flex flex-wrap justify-center md:justify-start gap-2">
                                                 <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
                                                     <Tag className="w-3 h-3" />
-                                                    {separata.promotionType === 'percentage' ? 'Porcentaje de Descuento' : 'Descuento Directo'}
+                                                    {item.promotionType === 'percentage' ? 'Porcentaje de Descuento' : 'Descuento Directo'}
                                                 </span>
                                                 <span className="text-blue-600 font-bold text-xs self-center">
-                                                    {separata.promotionType === 'percentage' ? `${separata.promotionValue}% OFF` : `-$${separata.promotionValue.toFixed(2)}`}
+                                                    {item.promotionType === 'percentage' ? `${item.promotionValue}% OFF` : `-$${item.promotionValue.toFixed(2)}`}
                                                 </span>
                                             </div>
                                         </div>
@@ -210,7 +214,7 @@ const SeparataDetail: React.FC<SeparataDetailProps> = ({ separata, onBack, onEdi
                         <div className="space-y-4 text-sm">
                             <div className="flex justify-between">
                                 <span className="text-gray-500">Total de Productos</span>
-                                <span className="font-bold text-gray-900">{separata.products.length} productos</span>
+                                <span className="font-bold text-gray-900">{separata.items?.length || 0} productos</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-500">Fecha de Creación</span>
