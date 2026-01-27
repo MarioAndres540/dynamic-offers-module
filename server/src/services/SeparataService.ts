@@ -2,7 +2,9 @@ import Separata, { ISeparata } from '../models/Separata';
 
 export class SeparataService {
     async createSeparata(data: Partial<ISeparata>): Promise<ISeparata> {
-        const { products, startTime, endTime } = data;
+        const products = data.products;
+        const startTime = new Date(data.startTime!);
+        const endTime = new Date(data.endTime!);
 
         if (!products || products.length === 0) {
             throw new Error("Separata must have at least one product.");
@@ -29,7 +31,9 @@ export class SeparataService {
     }
 
     async updateSeparata(id: string, data: Partial<ISeparata>): Promise<ISeparata | null> {
-        const { products, startTime, endTime } = data;
+        const products = data.products;
+        const startTime = data.startTime ? new Date(data.startTime) : undefined;
+        const endTime = data.endTime ? new Date(data.endTime) : undefined;
 
         if (products && products.length > 0 && startTime && endTime) {
             // Validate overlapping (excluding current one)

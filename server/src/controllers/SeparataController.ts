@@ -5,9 +5,11 @@ import Product from '../models/Product';
 export class SeparataController {
     async create(req: Request, res: Response) {
         try {
+            console.log('Creating Separata with data:', JSON.stringify(req.body, null, 2));
             const separata = await separataService.createSeparata(req.body);
             res.status(201).json(separata);
         } catch (error: any) {
+            console.error('Error in createSeparata:', error.message);
             res.status(400).json({ message: error.message });
         }
     }
@@ -23,10 +25,12 @@ export class SeparataController {
 
     async update(req: Request, res: Response) {
         try {
+            console.log(`Updating Separata ${req.params.id} with data:`, JSON.stringify(req.body, null, 2));
             const separata = await separataService.updateSeparata(req.params.id, req.body);
             if (!separata) return res.status(404).json({ message: 'Separata not found' });
             res.json(separata);
         } catch (error: any) {
+            console.error('Error in updateSeparata:', error.message);
             res.status(400).json({ message: error.message });
         }
     }

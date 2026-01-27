@@ -96,14 +96,18 @@ const SeparataForm: React.FC<SeparataFormProps> = ({ initialData, onBack, onSucc
                 startTime: start.toISOString(),
                 endTime: end.toISOString(),
                 products: selectedProducts.map(p => p._id),
-                promotionType: selectedProducts[0].promoType || 'percentage',
-                promotionValue: selectedProducts[0].promoValue || 10
+                promotionType: selectedProducts[0]?.promoType || initialData?.promotionType || 'percentage',
+                promotionValue: selectedProducts[0]?.promoValue || initialData?.promotionValue || 10
             };
 
+            console.log('Sending payload:', JSON.stringify(payload, null, 2));
+
             if (isEdit) {
-                await updateSeparata(initialData._id, payload);
+                const response = await updateSeparata(initialData._id, payload);
+                console.log('Update response:', response.data);
             } else {
-                await createSeparata(payload);
+                const response = await createSeparata(payload);
+                console.log('Create response:', response.data);
             }
             onSuccess();
         } catch (err: any) {
