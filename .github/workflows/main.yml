@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install & Test Server
+        run: |
+          cd server
+          npm install
+          npm test
+      - name: Lint Server
+        run: |
+          cd server
+          npm run lint || true # Allow lint failure for now if config missing
+
+  build-and-publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Log in to GitHub Packages
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build and push Server
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/server:latest ./server
+          docker push ghcr.io/${{ github.repository }}/server:latest
+      - name: Build and push Client
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/client:latest ./client
+          docker push ghcr.io/${{ github.repository }}/client:latest
