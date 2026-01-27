@@ -3,18 +3,16 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface ISeparata extends Document {
     products: mongoose.Types.ObjectId[];
     name: string;
+    description?: string;
     startTime: Date;
     endTime: Date;
     promotionType: 'fixed' | 'percentage';
-    promotionValue: number; // For fixed, it's the discount amount? or the final price? Requirement says "Precio de oferta". 
-    // "Descuento Directo (monto fijo) o Porcentaje". 
-    // If Fixed: Discount amount off the price? Or fixed override price?
-    // User says "Descuento Directo (monto fijo)". E.g. $10 off.  
-    // Let's assume Discount Amount for now, as it's cleaner.
+    promotionValue: number;
 }
 
 const SeparataSchema: Schema = new Schema({
     name: { type: String, required: true },
+    description: { type: String },
     products: [{ type: Schema.Types.ObjectId, ref: 'Product', required: true }],
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
