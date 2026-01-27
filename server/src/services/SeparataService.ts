@@ -18,10 +18,15 @@ export class SeparataService {
             $or: [
                 { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
             ]
-        });
+        }).populate('items.product');
 
         if (overlap) {
-            throw new Error(`Conflicto con la separata existente: ${overlap.name}`);
+            const conflictingProducts = (overlap.items || [])
+                .filter(i => productIds.some(id => id.toString() === (i.product as any)._id.toString()))
+                .map(i => (i.product as any).name);
+
+            const productNames = conflictingProducts.join(', ');
+            throw new Error(`Conflicto con la separata existente: ${overlap.name}. Los siguientes productos ya tienen promociones en esas fechas: ${productNames}`);
         }
 
         const separata = new Separata(data);
@@ -46,10 +51,15 @@ export class SeparataService {
                 $or: [
                     { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
                 ]
-            });
+            }).populate('items.product');
 
             if (overlap) {
-                throw new Error(`Conflicto con la separata existente: ${overlap.name}`);
+                const conflictingProducts = (overlap.items || [])
+                    .filter(i => productIds.some(pid => pid.toString() === (i.product as any)._id.toString()))
+                    .map(i => (i.product as any).name);
+
+                const productNames = conflictingProducts.join(', ');
+                throw new Error(`Conflicto con la separata existente: ${overlap.name}. Los siguientes productos ya tienen promociones en esas fechas: ${productNames}`);
             }
         }
 
@@ -59,7 +69,7 @@ export class SeparataService {
     // Method to check overlap for a new potential range (useful for UI validation before submit if needed)
     async checkOverlap(productIds: string[], start: Date, end: Date): Promise<boolean> {
         const overlap = await Separata.findOne({
-            products: { $in: productIds },
+            'items.product': { $in: productIds },
             $or: [
                 { startTime: { $lt: end }, endTime: { $gt: start } }
             ]
